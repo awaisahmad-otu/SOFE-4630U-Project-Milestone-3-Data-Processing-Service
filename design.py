@@ -3,10 +3,10 @@ import json
 import logging
 import os
 import base64
-import apache_beam as beam
 import cv2
 import numpy as np
 from PIL import Image
+import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 
@@ -36,7 +36,6 @@ def check_environment(argv):
 
 # Conditionally load models only if torch is available
 if torch_available:
-    # Load YOLOv5 and MiDaS Models Once (Singleton Pattern)
     class Model:
         def __init__(self):
             # Load YOLOv5 Object Detection Model
@@ -62,7 +61,6 @@ else:
 
 # Detect Pedestrians and Estimate Depth
 def detect_pedestrians(image_bytes):
-    # Decode base64 image
     image_data = base64.b64decode(image_bytes)
     img_input = Image.open(io.BytesIO(image_data))
     img_input = img_input.convert('RGB')
@@ -94,8 +92,6 @@ def detect_pedestrians(image_bytes):
         for _, row in pedestrians.iterrows():
             x_min, y_min, x_max, y_max = int(row['xmin']), int(row['ymin']), int(row['xmax']), int(row['ymax'])
             img_confidence = float(row['confidence'])
-
-            # Get average depth within pedestrian bounding box
             pedestrian_depth = np.mean(modified_map[y_min:y_max, x_min:x_max])
 
             boxes.append({
@@ -116,7 +112,7 @@ class PredictDoFn(beam.DoFn):
         image_bytes = element['Image']
         results = detect_pedestrians(image_bytes)
         
-        # Only yield output if results are available
+        # Only output if results are available
         if results:
             output = {
                 'ID': element['ID'],
