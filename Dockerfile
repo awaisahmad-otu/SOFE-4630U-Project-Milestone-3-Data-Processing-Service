@@ -24,12 +24,10 @@ RUN apt-get update && apt-get install -y \
     curl && \
     apt-get clean
 
-#Install Python dependencies (including specific versions for compatibility)
+#Install Python dependencies
 RUN pip install --upgrade pip && \
     pip install torch torchvision numpy==1.23.5 scipy==1.9.3 \
     opencv-python pandas timm Pillow matplotlib
-
-#Install Apache Beam and Google Cloud dependencies
 RUN pip install apache-beam[gcp] google-cloud-storage google-cloud-pubsub
 
 #Copy the application code into the container
