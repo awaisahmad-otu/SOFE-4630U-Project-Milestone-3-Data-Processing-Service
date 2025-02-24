@@ -51,7 +51,7 @@ def detect_pedestrians(image_path):
         x_min, y_min, x_max, y_max = int(row['xmin']), int(row['ymin']), int(row['xmax']), int(row['ymax'])
         img_confidence = float(row['confidence'])
 
-        # Get average depth within pedestrian bounding box (without inversion)
+        # Get average depth within pedestrian bounding box
         pedestrian_depth = np.mean(modified_map[y_min:y_max, x_min:x_max])
 
         boxes.append({
@@ -89,12 +89,10 @@ def getting_images(folder_path):
                 label = f"Person {img_confidence:.2f}, {img_distance}m"
                 cv2.putText(img_output, label, (bbox[0], bbox[1]-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
 
-            # Save the image in output folder
+            # Save image in output folder and display using matplotlib
             output_image_path = os.path.join(output_Imgfolder, file_name)
             cv2.imwrite(output_image_path, img_output)
             print(f"Image saved to: {output_image_path}")
-
-            # Display the image using Matplotlib 
             img_display = cv2.cvtColor(img_output, cv2.COLOR_BGR2RGB)
             plt.figure(figsize=(10, 6))
             plt.imshow(img_display)
@@ -103,8 +101,6 @@ def getting_images(folder_path):
             plt.show()
 
 if __name__ == "__main__":
-    # Folder whihc contains the images to test
-    image_folder = "./Dataset_Occluded_Pedestrian/"  
-
     # Process all images in the folder
+    image_folder = "./Dataset_Occluded_Pedestrian/"   
     getting_images(image_folder)
